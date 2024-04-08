@@ -72,17 +72,31 @@ blogRouter.put("/", async (c) => {
     return c.json({ msg: "Invalid inputs" });
   }
 
-  const blog = await prisma.post.update({
-    where: {
-      id: body.id,
-    },
-    data: {
-      title: body.title,
-      content: body.content,
-    },
-  });
+  const userId = c.get("userId");
 
-  return c.json({ id: blog.id });
+  console.log(userId);
+  console.log(body.id);
+
+  try {
+    const blog = await prisma.post.update({
+      where: {
+        id: body.id,
+        author: {
+          id: userId,
+        },
+      },
+      data: {
+        title: body.title,
+        content: body.content,
+      },
+    });
+
+    return c.json({ msg: "Blog post updated successfully", id: blog.id });
+  } catch (error) {
+    console.log(error);
+    c.status(403);
+    return c.json({ msg: "Unauthorized to edit blog post" });
+  }
 });
 
 // Todo: Add pagination
@@ -91,7 +105,19 @@ blogRouter.get("/bulk", async (c) => {
     datasourceUrl: c.env.DATABASE_URL,
   }).$extends(withAccelerate());
 
-  const blogs = await prisma.post.findMany();
+  const blogs = await prisma.post.findMany({
+    select: {
+      id: true,
+      content: true,
+      title: true,
+      createdAt: true,
+      author: {
+        select: {
+          name: true,
+        },
+      },
+    },
+  });
 
   return c.json({ blogs });
 });
@@ -107,6 +133,17 @@ blogRouter.get("/:id", async (c) => {
     const blog = await prisma.post.findFirst({
       where: {
         id: id,
+      },
+      select: {
+        id: true,
+        title: true,
+        content: true,
+        createdAt: true,
+        author: {
+          select: {
+            name: true,
+          },
+        },
       },
     });
 
