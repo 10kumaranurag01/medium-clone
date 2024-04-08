@@ -4,9 +4,9 @@ import { useParams } from "react-router-dom";
 
 const Blog = () => {
   const { id } = useParams();
-  const { loading, blog } = useBlog({ id: id });
+  const { loading, blog } = useBlog({ id: id || "" });
 
-  if (loading) {
+  if (loading || !blog) {
     return (
       <div className="flex justify-center items-center w-full h-screen">
         <img

@@ -57,9 +57,19 @@ export const useQuotes = () => {
   return { quote, loading };
 };
 
+export interface Blog {
+  content: string;
+  title: string;
+  id: string;
+  createdAt: string;
+  author: {
+    name: string;
+  };
+}
+
 export const useBlog = ({ id }: { id: string | undefined }) => {
   const [loading, setLoading] = useState(true);
-  const [blog, setBlog] = useState([]);
+  const [blog, setBlog] = useState<Blog>();
 
   useEffect(() => {
     const getFunction = async () => {
@@ -84,7 +94,7 @@ export const useBlog = ({ id }: { id: string | undefined }) => {
 
 export const useBlogs = () => {
   const [loading, setLoading] = useState(true);
-  const [blogs, setBlogs] = useState([]);
+  const [blogs, setBlogs] = useState<Blog[]>([]);
 
   useEffect(() => {
     const getFunction = async () => {
