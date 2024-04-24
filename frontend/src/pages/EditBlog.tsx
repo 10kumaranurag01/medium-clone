@@ -84,7 +84,7 @@ const EditBlog = () => {
                     onClick={async () => {
                       try {
                         const res = await axios.put(
-                          `${BACKEND_URL}/api/v1/blog`,
+                          `${BACKEND_URL}/api/v1/user-blog`,
                           {
                             id,
                             title: updatedTitle,
@@ -130,6 +130,7 @@ const EditBlog = () => {
                 data-dismissible-target="alert"
                 className="!absolute  top-3 right-3 h-8 max-h-[32px] w-8 max-w-[32px] select-none rounded-lg text-center align-middle font-sans text-xs font-medium uppercase text-white transition-all hover:bg-white/10 active:bg-white/30 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
                 type="button"
+                title="Close"
               >
                 <span className="absolute transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2">
                   <svg

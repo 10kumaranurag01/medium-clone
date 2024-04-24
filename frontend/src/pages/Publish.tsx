@@ -1,13 +1,13 @@
 import axios from "axios";
 import AppBar from "../components/AppBar";
-import { BACKEND_URL } from "../config";
+import { BACKEND_URL, blogCategories } from "../config";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const Publish = () => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-
+  const [category, setCategory] = useState(blogCategories[0].value);
   const navigate = useNavigate();
 
   return (
@@ -23,6 +23,20 @@ const Publish = () => {
                 setTitle(e.target.value);
               }}
             />
+            <select
+              id="blogCategory"
+              title="Blog Category"
+              className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block mt-2 p-2.5 outline-none"
+              onChange={(e) => {
+                setCategory(e.target.value);
+              }}
+            >
+              {blogCategories.map((category) => (
+                <option key={category.value} value={category.value}>
+                  {category.label}
+                </option>
+              ))}
+            </select>
           </div>
           <div>
             <div className="w-full mb-4 border border-gray-200 rounded-lg bg-gray-50">
@@ -42,19 +56,22 @@ const Publish = () => {
                   type="submit"
                   className="inline-flex items-center py-2.5 px-4 text-xs font-medium text-center text-white bg-black rounded-lg focus:ring-4 focus:ring-blue-200 hover:bg-gray-700"
                   onClick={async () => {
-                    const res = await axios.post(
-                      `${BACKEND_URL}/api/v1/blog`,
+                    await axios.post(
+                      `${BACKEND_URL}/api/v1/user-blog`,
                       {
                         title,
                         content,
+                        category,
                       },
                       {
                         headers: {
-                          Authorization: `Bearer ${localStorage.getItem("token")}`,
+                          Authorization: `Bearer ${localStorage.getItem(
+                            "token"
+                          )}`,
                         },
                       }
                     );
-                    navigate(`/blog/${res.data.id}`);
+                    navigate(`/blogs`);
                   }}
                 >
                   Publish Blog

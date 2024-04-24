@@ -35,7 +35,7 @@ export const useEditBLog = ({
 };
 
 export const useQuotes = () => {
-  const [loading, setLoading] = useState(true);
+  const [quoteLoading, setQuoteLoading] = useState(true);
   const [quote, setQuote] = useState("");
 
   useEffect(() => {
@@ -49,27 +49,46 @@ export const useQuotes = () => {
         }
       );
       setQuote(res.data[0].quote);
-      setLoading(false);
+      setQuoteLoading(false);
     };
     getQuotes();
   }, []);
 
-  return { quote, loading };
+  return { quote, quoteLoading };
 };
 
 export interface Blog {
   content: string;
   title: string;
+  published: boolean;
   id: string;
+  category: string;
   createdAt: string;
   author: {
     name: string;
   };
 }
+export interface UnPublishedBlog {
+  content: string;
+  title: string;
+  id: string;
+  published: boolean;
+  category: string;
+  createdAt: string;
+  author: {
+    name: string;
+    id: string;
+  };
+}
+export interface Profile {
+  email: string;
+  name: string;
+  notifications: string[];
+}
 
 export const useBlog = ({ id }: { id: string | undefined }) => {
   const [loading, setLoading] = useState(true);
-  const [blog, setBlog] = useState<Blog>();
+  const [blog, setBlog] = useState();
 
   useEffect(() => {
     const getFunction = async () => {
@@ -93,7 +112,7 @@ export const useBlog = ({ id }: { id: string | undefined }) => {
 };
 
 export const useBlogs = () => {
-  const [loading, setLoading] = useState(true);
+  const [blogLoading, setBlogLoading] = useState(true);
   const [blogs, setBlogs] = useState<Blog[]>([]);
 
   useEffect(() => {
@@ -105,6 +124,34 @@ export const useBlogs = () => {
         },
       });
       setBlogs(res.data.blogs);
+      setBlogLoading(false);
+    };
+
+    getFunction();
+  }, []);
+
+  return {
+    blogLoading,
+    blogs,
+  };
+};
+
+export const useUnpublishedBlogs = () => {
+  const [loading, setLoading] = useState(true);
+  const [unpublishedBlogs, setUnpublishedBlogs] = useState<UnPublishedBlog[]>(
+    []
+  );
+
+  useEffect(() => {
+    const getFunction = async () => {
+      const token = localStorage.getItem("token");
+      const res = await axios.get(`${BACKEND_URL}/api/v1/admin-blog/bulk`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setUnpublishedBlogs(res.data.blogs);
+
       setLoading(false);
     };
 
@@ -113,6 +160,91 @@ export const useBlogs = () => {
 
   return {
     loading,
-    blogs,
+    unpublishedBlogs,
+  };
+};
+
+export const useUnpublishedBlog = ({ id }: { id: string | undefined }) => {
+  const [loading, setLoading] = useState(true);
+  const [blog, setBlog] = useState<UnPublishedBlog>();
+
+  useEffect(() => {
+    const getFunction = async () => {
+      const token = localStorage.getItem("token");
+      const res = await axios.get(`${BACKEND_URL}/api/v1/admin-blog/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setBlog(res.data.blog);
+      setLoading(false);
+    };
+
+    getFunction();
+  }, [id]);
+
+  return {
+    loading,
+    blog,
+  };
+};
+
+export const useProfile = () => {
+  const [loading, setLoading] = useState(true);
+  const [profile, setProfile] = useState<Profile>();
+  const [person, setPerson] = useState("");
+
+  useEffect(() => {
+    const getFunction = async () => {
+      const token = localStorage.getItem("token");
+      const whoami = await axios.get(`${BACKEND_URL}/api/v1/whoami`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const res = await axios.get(
+        `${BACKEND_URL}/api/v1/${whoami.data.iam}/profile`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setProfile(res.data.details);
+      setPerson(whoami.data.iam);
+      setLoading(false);
+    };
+
+    getFunction();
+  }, []);
+
+  return {
+    loading,
+    profile,
+    person,
+  };
+};
+export const useNotifications = () => {
+  const [loading, setLoading] = useState(true);
+  const [notifications, setNotifications] = useState([]);
+
+  useEffect(() => {
+    const getFunction = async () => {
+      const token = localStorage.getItem("token");
+      const res = await axios.get(`${BACKEND_URL}/api/v1/user/notifications`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setNotifications(res.data.notifications);
+      setLoading(false);
+    };
+
+    getFunction();
+  }, []);
+
+  return {
+    loading,
+    notifications,
   };
 };

@@ -1,8 +1,8 @@
 import { Link } from "react-router-dom";
 
-const AppBar = () => {
+const MainAppBar = () => {
   return (
-    <div className="border-b flex justify-between px-10 py-4 ">
+    <div className="border-b flex justify-between px-10 py-3 bg-white">
       <Link
         to={"/blogs"}
         className="flex flex-col justify-center cursor-pointer font-semibold"
@@ -21,45 +21,40 @@ const AppBar = () => {
           <div className="pl-2 text-lg">Medeum</div>
         </div>
       </Link>
-      <div className="flex items-center">
-        <Link to={"/publish"} className="">
+      <div className="flex items-center justify-center">
+        <Link to={"/admin-signup"} className="mx-2">
           <button
+            className="select-none rounded-lg bg-gray-900 py-3 px-6 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md shadow-gray-900/10 transition-all hover:shadow-lg hover:shadow-gray-900/20 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
             type="button"
-            className="mr-4 mt-2 text-white bg-green-700 hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-green-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2"
           >
-            Create Blog
+            Admin
           </button>
         </Link>
-        <Link to={"/"} className="">
+        <Link to={"/signup"} className="mx-2">
           <button
+            className="flex justify-center items-center select-none rounded-lg border border-gray-900 py-3 px-6 text-center align-middle font-sans text-xs font-bold uppercase text-gray-900 transition-all hover:opacity-75 focus:ring focus:ring-gray-300 active:opacity-[0.85] disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
             type="button"
-            className="mr-4 mt-2 text-white bg-black hover:bg-gray-700 focus:outline-none focus:ring-4 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2"
-            onClick={() => {
-              localStorage.removeItem("token");
-            }}
           >
-            Log Out
-          </button>
-        </Link>
-        <Link to={"/profile"}>
-          <div className="relative w-10 h-10 overflow-hidden bg-gray-100 rounded-full dark:bg-gray-600 hover:bg-gray-500">
+            User
             <svg
-              className="absolute w-12 h-12 text-gray-400 -left-1"
-              fill="currentColor"
-              viewBox="0 0 20 20"
               xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              className="w-4 h-4 pl-1"
             >
               <path
-                fill-rule="evenodd"
-                d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
-                clip-rule="evenodd"
-              ></path>
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="m4.5 19.5 15-15m0 0H8.25m11.25 0v11.25"
+              />
             </svg>
-          </div>
+          </button>
         </Link>
       </div>
     </div>
   );
 };
 
-export default AppBar;
+export default MainAppBar;

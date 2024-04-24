@@ -5,7 +5,7 @@ import { SigninInput } from "@egotistic5629/medium-common";
 import axios from "axios";
 import { BACKEND_URL } from "../config";
 
-const Auth = ({ type }: { type: "signup" | "signin" }) => {
+const AdminAuth = ({ type }: { type: "signup" | "signin" }) => {
   const [postInputs, setPostInputs] = useState<SigninInput>({
     name: "",
     email: "",
@@ -17,7 +17,9 @@ const Auth = ({ type }: { type: "signup" | "signin" }) => {
   async function sendRequest() {
     try {
       const response = await axios.post(
-        `${BACKEND_URL}/api/v1/user/${type === "signup" ? "signup" : "signin"}`,
+        `${BACKEND_URL}/api/v1/admin/${
+          type === "signup" ? "signup" : "signin"
+        }`,
         postInputs
       );
       const { jwt } = response.data;
@@ -36,15 +38,17 @@ const Auth = ({ type }: { type: "signup" | "signin" }) => {
         <div>
           <div className="px-10">
             <div className="text-3xl font-extrabold">
-              {type === "signup" ? "Create an user account" : "Log in to user account"}
+              {type === "signup"
+                ? "Create an admin account"
+                : "Log in to admin account"}
             </div>
             <div className="text-slate-500 text-center pt-1">
               {type === "signup"
-                ? "Already have an account?"
-                : "Don't have an account?"}
+                ? "Already have an admin account?"
+                : "Don't have an admin account?"}
               <Link
                 className="pl-2 underline"
-                to={type === "signup" ? "/signin" : "/signup"}
+                to={type === "signup" ? "/admin-signin" : "/admin-signup"}
               >
                 {type === "signup" ? "SignIn" : "SignUp"}
               </Link>
@@ -92,12 +96,12 @@ const Auth = ({ type }: { type: "signup" | "signin" }) => {
             >
               {type === "signup" ? "Sign Up" : "Sign In"}
             </button>
-            <Link to={"/admin-signup"}>
+            <Link to={"/signup"}>
               <button
                 type="button"
                 className="text-black bg-white border-solid border-2 border-black hover:bg-gray-100 focus:outline-none focus:ring-1 focus:ring-gray-900 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 w-full"
               >
-                Are you an admin? Click here to sign up 
+                Are you an user? Click here to sign up
               </button>
             </Link>
           </div>
@@ -107,4 +111,4 @@ const Auth = ({ type }: { type: "signup" | "signin" }) => {
   );
 };
 
-export default Auth;
+export default AdminAuth;

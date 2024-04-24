@@ -9,7 +9,7 @@ interface BlogCardProps {
   publishDate: string;
 }
 
-const BlogCard = ({
+const AdminBlogCard = ({
   id,
   authorName,
   title,
@@ -26,7 +26,7 @@ const BlogCard = ({
   }).format(date);
 
   return (
-    <Link to={`/blog/${id}`}>
+    <Link to={`/admin-blog/${id}`}>
       <div className="p-4 border-b border-slate-200 pb-4 w-screen max-w-screen-md cursor-pointer">
         <div className="flex">
           <Avatar size={6} name={authorName} />{" "}
@@ -67,4 +67,4 @@ export function Avatar({ name }: { name: string; size: number }) {
   );
 }
 
-export default BlogCard;
+export default AdminBlogCard;

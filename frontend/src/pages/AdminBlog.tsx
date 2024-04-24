@@ -1,10 +1,10 @@
 import FullBlog from "../components/FullBlog";
-import { useBlog } from "../hooks";
+import { useUnpublishedBlog } from "../hooks";
 import { useParams } from "react-router-dom";
 
-const Blog = () => {
+const AdminBlog = () => {
   const { id } = useParams();
-  const { loading, blog } = useBlog({ id: id || "" });
+  const { loading, blog } = useUnpublishedBlog({ id: id || "" });
 
   if (loading || !blog) {
     return (
@@ -20,10 +20,9 @@ const Blog = () => {
 
   return (
     <div>
-      @ts-ignore
       <FullBlog blog={blog} />
     </div>
   );
 };
 
-export default Blog;
+export default AdminBlog;

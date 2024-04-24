@@ -1,21 +1,35 @@
-import { Link } from "react-router-dom";
-import { useQuotes } from "../hooks";
+import { Link, useNavigate } from "react-router-dom";
+import { useProfile, useQuotes } from "../hooks";
 import AppBar from "./AppBar";
 import { Avatar } from "./BlogCard";
 import BlogSkeleton from "./BlogSkeleton";
+import axios from "axios";
+import { BACKEND_URL } from "../config";
 
 interface Blog {
   content: string;
   title: string;
   id: string;
+  published: boolean;
+  category: string;
   createdAt: string;
   author: {
     name: string;
+    id: string;
   };
 }
 
+interface publishBlog {
+  id: string;
+  content: string;
+  title: string;
+  category: string;
+  authorId: string;
+}
+
 const FullBlog = ({ blog }: { blog: Blog }) => {
-  const { quote, loading } = useQuotes();
+  const { quote, quoteLoading } = useQuotes();
+  const { person, loading } = useProfile();
 
   const dateString = blog.createdAt;
   const date = new Date(dateString);
@@ -25,11 +39,32 @@ const FullBlog = ({ blog }: { blog: Blog }) => {
     year: "numeric",
   }).format(date);
 
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center w-full h-screen">
+        <img
+          className="w-20 h-20 animate-spin"
+          src="https://www.svgrepo.com/show/448500/loading.svg"
+          alt="Loading icon"
+        ></img>
+      </div>
+    );
+  }
+
   return (
     <div>
       <AppBar />
+      {person == "admin" && blog.published == false ? (
+        <ApproveRejectBtn
+          id={blog.id}
+          title={blog.title}
+          content={blog.content}
+          authorId={blog.author.id}
+          category={blog.category}
+        />
+      ) : null}
       <div className="flex justify-center">
-        <div className="grid grid-cols-12 pt-12 w-full px-10 max-w-screen-xl">
+        <div className="grid grid-cols-12 pt-4 w-full px-10 max-w-screen-xl">
           <div className="col-span-8">
             <div className="flex">
               <div className="text-5xl font-extrabold">{blog.title}</div>
@@ -55,8 +90,8 @@ const FullBlog = ({ blog }: { blog: Blog }) => {
                 </svg>
               </Link>
             </div>
-            <div className="text-slate-500 pt-2">
-              Posted on {formattedDate}
+            <div className="text-slate-500 pt-3">
+              Posted on {formattedDate} | Category: {blog.category}
             </div>
             <div className="pt-4">{blog.content}</div>
           </div>
@@ -71,7 +106,7 @@ const FullBlog = ({ blog }: { blog: Blog }) => {
                   <div className="text-xl font-bold">{blog.author.name}</div>
                 </div>
                 <div className="pt-2 text-slate-500">
-                  {loading ? <BlogSkeleton /> : quote}
+                  {quoteLoading ? <BlogSkeleton /> : quote}
                 </div>
               </div>
             </div>
@@ -81,5 +116,56 @@ const FullBlog = ({ blog }: { blog: Blog }) => {
     </div>
   );
 };
+
+function ApproveRejectBtn({
+  id,
+  title,
+  content,
+  category,
+  authorId,
+}: publishBlog) {
+  const navigate = useNavigate();
+  return (
+    <div className="pt-4 ml-40">
+      <button
+        onClick={async () => {
+          const res = await axios.post(
+            `${BACKEND_URL}/api/v1/admin-blog`,
+            {
+              id,
+              title,
+              content,
+              category,
+              authorId,
+            },
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
+            }
+          );
+          await axios.post(
+            `${BACKEND_URL}/api/v1/admin-blog/post-notification`,
+            {
+              notification: `Your blog with title ${title} has been approved!`,
+              postId: res.data.id,
+              userId: authorId,
+            },
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
+            }
+          );
+          navigate(`/blog/${res.data.id}`);
+        }}
+        type="button"
+        className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2"
+      >
+        Approve
+      </button>
+    </div>
+  );
+}
 
 export default FullBlog;
